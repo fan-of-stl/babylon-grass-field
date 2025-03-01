@@ -1,0 +1,22 @@
+{
+  "name": "webgl-grass-field",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@babylonjs/core": "^7.51.1",
+    "@babylonjs/loaders": "^7.51.1",
+    "@types/node": "^22.13.5",
+    "babylonjs": "^7.51.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
+  }
+}
