@@ -8,7 +8,7 @@ export function createGround(scene: Scene): void {
   );
 
   const groundMaterial = new StandardMaterial("groundMaterial", scene);
-  groundMaterial.diffuseColor = new Color3(0.4, 0.3, 0.2);
+  groundMaterial.diffuseColor = new Color3(0.4, 3, 1);
   groundMaterial.specularColor = Color3.Black();
   groundMaterial.alpha = 0.3;
 

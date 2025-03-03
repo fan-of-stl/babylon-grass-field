@@ -4,7 +4,6 @@ import {
   Engine,
   HDRCubeTexture,
   HemisphericLight,
-  Mesh,
   Scene,
   Vector3,
 } from "@babylonjs/core";
@@ -12,51 +11,49 @@ import { createGround } from "../components/Ground";
 import createGrassBlade from "../components/grassCreation";
 import createGrassMaterial from "../components/grassMaterial";
 import ThinInstancePatch from "../utils/ThinInstancePatch";
+import { createPlayer } from "../components/createPlayer";
 
 export function createScene(canvas: HTMLCanvasElement): {
   engine: Engine;
   scene: Scene;
 } {
-  const engine = new Engine(canvas, true);
+  const engine = new Engine(canvas, true, { adaptToDeviceRatio: true });
   const scene = new Scene(engine);
+  scene.clearColor.set(0.8, 0.9, 1, 1);
   engine.setHardwareScalingLevel(1 / window.devicePixelRatio);
 
   const camera = new ArcRotateCamera(
-    "camera1",
-    0,
-    3.14 / 4,
-    20,
-    Vector3.Zero(),
+    "camera",
+    Math.PI / 2,
+    Math.PI / 3,
+    15,
+    new Vector3(0, 1, 0),
     scene
   );
-  camera.setTarget(Vector3.Zero());
   camera.attachControl(canvas, true);
-  camera.lowerRadiusLimit = 3; // Prevents zooming too close
-  camera.upperRadiusLimit = 30; // Limits max zoom distance
-  camera.wheelPrecision = 20; // Smooth zoom control
-  camera.panningSensibility = 500; // Slows down panning for better control
+  camera.lowerRadiusLimit = 5;
+  camera.upperRadiusLimit = 50;
+  camera.wheelPrecision = 15;
+  camera.panningSensibility = 600;
 
-  new HemisphericLight("light", new Vector3(0, 1, 0), scene);
-
-  var light = new DirectionalLight(
-    "light",
+  new HemisphericLight("hemiLight", new Vector3(0, 1, 0), scene);
+  const light = new DirectionalLight(
+    "dirLight",
     new Vector3(1, -1, 0).normalize(),
     scene
   );
-
   light.intensity = 0.7;
 
-  // Mesh.CreateGround("ground", 10, 10, 100, scene);
   createGround(scene);
 
-  var grassBlade = createGrassBlade(scene, 5);
-  grassBlade.isVisible = false;
+  const player = createPlayer(scene);
 
-  grassBlade.material = createGrassMaterial(light, scene, undefined);
+  const grassBlade = createGrassBlade(scene, 5);
+  grassBlade.isVisible = false; // Use instances instead
+  grassBlade.material = createGrassMaterial(light, scene, player);
 
-  const patchSize = 20;
+  const patchSize = 40;
   const patchResolution = patchSize * 10;
-
   const patch = ThinInstancePatch.CreateSquare(
     new Vector3(0, 0, 0),
     patchSize,
@@ -64,9 +61,9 @@ export function createScene(canvas: HTMLCanvasElement): {
   );
   patch.createInstances(grassBlade);
 
-  const hdrTexture = new HDRCubeTexture("/environment/sky.hdr", scene, 512);
+  const hdrTexture = new HDRCubeTexture("/environment/sky.hdr", scene, 256);
   scene.environmentTexture = hdrTexture;
-  scene.createDefaultSkybox(hdrTexture, true, 1000);
+  scene.createDefaultSkybox(hdrTexture, true, 500);
 
   return { engine, scene };
 }
