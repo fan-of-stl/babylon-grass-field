@@ -20,21 +20,7 @@ Object.assign(loader.style, {
 });
 document.body.appendChild(loader);
 
-const windControl = document.createElement("input");
-Object.assign(windControl, {
-  type: "range",
-  min: "0",
-  max: "5",
-  step: "0.1",
-  value: "1",
-});
-Object.assign(windControl.style, {
-  position: "absolute",
-  top: "10px",
-  left: "10px",
-  zIndex: "1000",
-});
-document.body.appendChild(windControl);
+
 
 const fpsCounter = document.createElement("span");
 Object.assign(fpsCounter.style, {
@@ -52,10 +38,7 @@ Object.assign(fpsCounter.style, {
 fpsCounter.innerText = "-";
 document.body.appendChild(fpsCounter);
 
-windControl.addEventListener("input", (event) => {
-  const value = parseFloat((event.target as HTMLInputElement).value);
-  console.log("Wind strength:", value);
-});
+
 
 const updateUI = () => {
   fpsCounter.innerText = `${Math.floor(engine.getFps())}`;
