@@ -56,7 +56,7 @@ export function createScene(canvas: HTMLCanvasElement): {
   const patchResolution = patchSize * 10;
   const patch = ThinInstancePatch.CreateSquare(
     new Vector3(0, 0, 0),
-    patchSize,
+    patchSize + 50,
     patchResolution
   );
   patch.createInstances(grassBlade);

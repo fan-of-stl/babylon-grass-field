@@ -42,7 +42,7 @@ function createGrassMaterial(
   player: BABYLON.TransformNode
 ): BABYLON.ShaderMaterial {
   const shaderName = "grassMaterial";
-  let strength = 0.1;
+  let strength = 1;
 
   const { windControl, windSpeedDisplay } = createWindControls();
 
@@ -284,7 +284,7 @@ function createGrassMaterial(
       const target = event.target as HTMLInputElement;
       if (target && target.value) {
         strength = parseFloat(target.value);
-        const windSpeedMps = 10 + strength * 100;
+        const windSpeedMps = 10 + strength * 10;
         windSpeedDisplay.innerHTML = `Wind Speed: ${windSpeedMps.toFixed(
           1
         )} m/s`;
@@ -294,7 +294,7 @@ function createGrassMaterial(
     }
   });
 
-  const initialWindSpeedMps = 10 + strength * 100;
+  const initialWindSpeedMps = strength * 10;
   windSpeedDisplay.innerHTML = `Wind Speed: ${initialWindSpeedMps.toFixed(
     1
   )} m/s`;
