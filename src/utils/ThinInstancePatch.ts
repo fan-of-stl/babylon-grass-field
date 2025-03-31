@@ -29,27 +29,24 @@ class ThinInstancePatch {
       this.baseMesh.makeGeometryUnique();
     }
 
-    // Get distance from camera to patch
     const distance = Vector3.Distance(this.position, camera.position);
 
-    // Define LOD distances
-    const highDetailDistance = 30; // Full detail within 30 units
-    const midDetailDistance = 60; // Medium detail within 60 units
-    const lowDetailDistance = 100; // Low detail beyond 100 units
+    const highDetailDistance = 30; 
+    const midDetailDistance = 60; 
+    const lowDetailDistance = 100; 
 
-    let lodFactor = 1.0; // Default (Full resolution)
+    let lodFactor = 1.0; 
     
     if (distance > highDetailDistance) {
-        lodFactor = 0.5; // Reduce by 50% beyond 30 units
+        lodFactor = 0.5; 
     }
     if (distance > midDetailDistance) {
-        lodFactor = 0.25; // Reduce to 25% beyond 60 units
+        lodFactor = 0.25; 
     }
     if (distance > lowDetailDistance) {
-        lodFactor = 0.1; // Sparse grass far away
+        lodFactor = 0.1; 
     }
 
-    // Reduce matrix buffer size based on LOD
     const reducedInstances = Math.floor(this.matrixBuffer.length / 16 * lodFactor);
     const lodMatrixBuffer = this.matrixBuffer.slice(0, reducedInstances * 16);
 
