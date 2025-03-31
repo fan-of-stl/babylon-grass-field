@@ -59,7 +59,7 @@ export function createScene(canvas: HTMLCanvasElement): {
     patchSize + 50,
     patchResolution
   );
-  patch.createInstances(grassBlade);
+  patch.createInstances(grassBlade, camera);
 
   const hdrTexture = new HDRCubeTexture("/environment/sky.hdr", scene, 256);
   scene.environmentTexture = hdrTexture;

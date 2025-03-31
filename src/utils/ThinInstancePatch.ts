@@ -1,4 +1,4 @@
-import { Mesh, Vector3 } from "@babylonjs/core";
+import { Camera, Mesh, Vector3 } from "@babylonjs/core";
 import createSquareMatrixBuffer from "../components/createSquareMatrix";
 
 class ThinInstancePatch {
@@ -19,11 +19,9 @@ class ThinInstancePatch {
     );
   }
 
-  createInstances(baseMesh: Mesh) {
+  createInstances(baseMesh: Mesh, camera: Camera) {
     if (!baseMesh.geometry) {
-      throw new Error(
-        "Tried to create instances from a mesh without geometry."
-      );
+      throw new Error("Tried to create instances from a mesh without geometry.");
     }
 
     if (!this.baseMesh) {
@@ -31,17 +29,40 @@ class ThinInstancePatch {
       this.baseMesh.makeGeometryUnique();
     }
 
-    this.baseMesh.isVisible = true;
-    this.baseMesh.thinInstanceSetBuffer("matrix", this.matrixBuffer, 16);
+    // Get distance from camera to patch
+    const distance = Vector3.Distance(this.position, camera.position);
 
-    const numInstances = this.matrixBuffer.length / 16;
+    // Define LOD distances
+    const highDetailDistance = 30; // Full detail within 30 units
+    const midDetailDistance = 60; // Medium detail within 60 units
+    const lowDetailDistance = 100; // Low detail beyond 100 units
+
+    let lodFactor = 1.0; // Default (Full resolution)
+    
+    if (distance > highDetailDistance) {
+        lodFactor = 0.5; // Reduce by 50% beyond 30 units
+    }
+    if (distance > midDetailDistance) {
+        lodFactor = 0.25; // Reduce to 25% beyond 60 units
+    }
+    if (distance > lowDetailDistance) {
+        lodFactor = 0.1; // Sparse grass far away
+    }
+
+    // Reduce matrix buffer size based on LOD
+    const reducedInstances = Math.floor(this.matrixBuffer.length / 16 * lodFactor);
+    const lodMatrixBuffer = this.matrixBuffer.slice(0, reducedInstances * 16);
+
+    this.baseMesh.isVisible = true;
+    this.baseMesh.thinInstanceSetBuffer("matrix", lodMatrixBuffer, 16);
+
+    const numInstances = lodMatrixBuffer.length / 16;
     ThinInstancePatch.totalGrassInstances += numInstances;
-    console.log(
-      `Total Grass Instances: ${ThinInstancePatch.totalGrassInstances}`
-    );
+    console.log(`Total Grass Instances: ${ThinInstancePatch.totalGrassInstances}`);
 
     ThinInstancePatch.updateGrassCounter();
-  }
+}
+
 
   private static updateGrassCounter() {
     let counterElement = document.getElementById("grass-counter");
